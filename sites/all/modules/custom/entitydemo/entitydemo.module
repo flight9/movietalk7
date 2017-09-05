@@ -1,0 +1,65 @@
+<?php
+
+/*
+ * Implements hook_menu()
+ */
+function entitydemo_menu() {
+	$items = array();
+	//单独页面
+	$items['entidemo'] = array(
+		'title' => 'Entity demos',
+		'description' => 'List of entity demo\'s provide by this module.',
+		'page callback' => 'entitydeomo_demos',
+		'access callback' => TRUE,
+		'menu_name' => 'navigation', 
+		'file' => 'includes/entitydemo.demos.inc', 
+	);
+	//单独页面
+	$items['entidemo/1'] = array(
+		'title' => 'Entity load demos',
+		'description' => 'Demostration of using entity functions to interact with entities in core.',
+		'page callback' => 'entitydeomo_page1',
+		'access callback' => TRUE,
+		'menu_name' => 'navigation', 
+		'file' => 'includes/entitydemo.demos1.inc', 
+	);
+	//单独页面
+	$items['entidemo/2'] = array(
+		'title' => 'EntityFieldQuery',
+		'description' => 'Demostration of using EntityFieldQuery to find data.',
+		'page callback' => 'entitydeomo_page2',
+		'access callback' => TRUE,
+		'menu_name' => 'navigation', 
+		'file' => 'includes/entitydemo.demos2.inc', 
+	);
+	return $items;
+}
+
+/*
+ * Implements hook_node_view()
+ */
+/*function entitydemo_node_view($node) {
+	dsm($node, 'node');
+	
+	dsm($node->field_year['und'][0]['value'], 'old_style');
+	$wrapper = entity_metadata_wrapper('node', $node);
+	dsm($wrapper->field_year->value(),'wrapper_style');
+	
+	//get refered entity's data
+	dsm($wrapper->author->mail->value(),'eamil address of author');
+	
+	//get property/field info
+	dsm($wrapper->getPropertyInfo(),'info of node');
+	dsm($wrapper->author->getPropertyInfo(), 'info of author');
+	
+	//get multiple values
+	foreach($wrapper->field_genre->getIterator() as $genre) {
+		#dsm($genre->getPropertyInfo());
+		dsm($genre->name->value(),'genre name');
+	}
+	
+	//get label
+	dsm($wrapper->label(),'node label');
+	dsm($wrapper->author->label(),'author label');
+}*/
+

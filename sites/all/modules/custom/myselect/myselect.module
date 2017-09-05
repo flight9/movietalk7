@@ -1,0 +1,59 @@
+<?php
+
+/*
+ * Implements hook_menu
+ */
+function myselect_menu() {
+	//单独页面
+	$items['admin/reports/node-list'] = array(
+		'title' => "List of nodes",
+		'description' => t('A list of nodes with published status'),
+		'page callback' => 'myselect_node_list',
+		'access arguments' => array('administer content'), 
+	);
+	return $items;
+}
+
+/*
+ * Custom page callback
+ */
+function myselect_node_list() {
+	$node_types = node_type_get_types();
+	$stati = array(0,1);//0=unpublished,1=published
+	
+	foreach($node_types as $type) {
+		$typename = $type->type;
+		foreach($stati as $status) {
+			//SELECT COUNT FROM node WHERE type=$typename AND status=$status;
+			$query = db_select('node','n')
+				->condition('type', $typename)
+				->condition('status', $status);
+			$query->addExpression('COUNT(nid)','node_count'); 
+			$results = $query->execute();
+			$data = $results->fetchObject();
+			#krumo($data);
+			
+			//assign vars for printing
+			if($status ==0) {
+				$status = 'unpublished';
+			}else {
+				$status = 'published';
+			}
+			$items[] = t('The %type content type has %num %status nodes.', array(
+				'%type'=>$typename,
+				'%num'=>$data->node_count,
+				'%status'=>$status,
+			));
+			
+			
+		}
+	}
+	#krumo($items);
+	
+	//create content
+	$content['node-list'] = array(
+		'#theme' =>'item_list',
+		'#items' => $items,
+	);
+	return render($content);
+}

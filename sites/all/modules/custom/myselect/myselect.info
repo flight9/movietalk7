@@ -1,0 +1,7 @@
+name = My Select
+description = Test for db_select.
+core = 7.x
+package = zzzz
+
+
+

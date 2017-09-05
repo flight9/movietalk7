@@ -1,0 +1,7 @@
+name = Video Entity
+description = Provide a custom video entity for tracking and displaying video embed codes.
+core = 7.x
+package = zzzz
+
+
+

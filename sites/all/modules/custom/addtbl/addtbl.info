@@ -1,0 +1,7 @@
+name = Add Table
+description = Just test how to add a table.
+core = 7.x
+package = zzzz
+
+
+

@@ -1,0 +1,52 @@
+<?php
+
+/*
+ * Implements hook_form_alter
+ */
+function myalter_form_alter(&$form, &$form_state, $form_id) {
+	//krumo($form_id);
+	switch($form_id) {
+		case 'user_profile_form':
+			$form['account']['pass']['#description'] = t('To change the current user password, enter the new password in both fields. Pls dont use common pass like "12345"!!');
+			$form['#validate'][] = 'myalter_validate_password';
+			//krumo($form);
+		break;
+	}
+}
+
+
+/* 
+ * Implements hook_form_FORM_ID_alter
+ */
+function myalter_form_user_register_form_alter(&$form, &$form_state, $form_id) {
+	$form['#validate'][] = 'myalter_validate_password';
+	//krumo($form);
+}
+
+/*
+ * Custom password validation
+ */
+function myalter_validate_password($form, &$form_state) {
+	//$bad_passwords = array('password','12345','love',);
+	$bad_passwords = explode(',',variable_get('myalter_badpasswords'));
+	if(in_array($form_state['values']['pass'], $bad_passwords)) {
+		form_set_error('pass',t('Please use a more secure password!'));
+	}
+	krumo($form_state);
+} 
+
+/*
+ * Implements hook_menu
+ */
+function myalter_menu() {
+	//单独页面
+	$items['admin/config/people/passwords'] = array(
+		'title' => "Bad Passwords List",
+		'description' => t('Configure a list of passwords that aren\'t allowed.'),
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('myalter_passwords_form'),
+		'access arguments' => array('administer site configuration'), 
+		'file' => 'myalter_passwords_form.inc.php',
+	);
+	return $items;
+}

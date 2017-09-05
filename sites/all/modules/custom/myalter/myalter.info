@@ -1,0 +1,7 @@
+name = My Alter
+description = Demo 1 hook_form_alter.
+core = 7.x
+package = zzzz
+
+
+

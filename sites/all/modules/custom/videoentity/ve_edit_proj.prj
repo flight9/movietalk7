@@ -1,0 +1,8 @@
+<NotepadPlus>
+    <Project name="videoentity">
+        <File name="videoentity.admin.inc" />
+        <File name="videoentity.info" />
+        <File name="videoentity.install" />
+        <File name="videoentity.module" />
+    </Project>
+</NotepadPlus>

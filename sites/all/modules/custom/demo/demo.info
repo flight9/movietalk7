@@ -1,0 +1,7 @@
+name = Demo
+description = Demo 1修改 hook_permission, 2修改 hook_node_view.
+core = 7.x
+package = zzzz
+
+
+

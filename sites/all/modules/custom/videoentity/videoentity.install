@@ -1,0 +1,81 @@
+<?php
+/**
+ * @file
+ * Installation and schema hooks for videoentity.module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function videoentity_schema() {
+  $schema = array();
+  $schema['videoentity_video'] = array(
+    'description' => 'The base table for the Video entity',
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary key of the Video entity',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+	  'revision_id' => array(
+			'description' => 'Unique revision ID',
+			'type' => 'int',	
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+			'default' => NULL,
+	  ),
+      'name' => array(
+        'description' => 'Human readable name of the video.',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+      ),
+      'created_at' => array(
+        'description' => 'Date and time the video record was processed.',
+        'type' => 'int',
+        'not null' => FALSE,
+      ),
+      'updated_at' => array(
+        'description' => 'Date and time the video record was last modified.',
+        'type' => 'int',
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+  
+  $schema['videoentity_video_revison'] = array(
+	'description' => t('Video entity revison'),
+    'fields' => array(
+		'revision_id' => array(
+			'description' => 'Primary key: Unique revision ID',
+			'type' => 'serial',	
+			'unsigned' => TRUE,
+			'not null' => TRUE,
+		),
+		'id' => array(
+			'description' => 'The id of the attached entity',
+			'type' => 'int',	//非 serial
+			'unsigned' => TRUE,
+			'not null' => FALSE,
+			'default' => NULL,
+		),
+		'embedcode' => array(
+			'description' => 'The youtube embed code',
+			'type' => 'varchar',
+			'length' => '255',
+			'not null' => TRUE,
+		),
+		'duration' => array(
+			'description' => 'Length of the video, in seconds.',
+			'type' => 'int',
+			'not null' => FALSE,
+			'default' => 0,
+		),
+	),
+	'primary key' => array('revision_id'),
+  );
+  return $schema;
+}
+

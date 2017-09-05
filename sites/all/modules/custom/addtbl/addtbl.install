@@ -1,0 +1,68 @@
+<?php
+
+/*
+ * Implements hook_schema
+ */
+function addtbl_schema() {
+	$schema['addtbl'] = array(
+		'description' => 'Information about node views',
+		'fields' => array(
+			'nid' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+				'description' => "The node's {node}.nid.",
+			),
+			'uid' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+				'description' => "The user's {uid}.uid.",
+			),
+			'view_count' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+				'description' => "Simple node view counter per user.",
+			),
+			'last_viewed' => array(
+				'type' => 'int',
+				'unsigned' => TRUE,
+				'not null' => TRUE,
+				'default' => 0,
+				'description' => "The last view date(timestamp)",
+			),
+		),
+		'primary key' => array('nid','uid'),
+	);
+	
+	return $schema;
+}
+
+/*
+ * Implements hook_update_N()
+ */
+function addtbl_update_7000() {
+	drupal_install_schema('addtbl');
+}
+
+/**
+ * Implements hook_update_N()
+ *
+ * Add the 'Last viewed date' field.
+ */
+function addtbl_update_7001() {
+	$field = array(
+		'type' => 'int',
+		'unsigned' => TRUE,
+		'not null' => TRUE,
+		'default' => 0,
+		'description' => "The last view date(timestamp)",
+	);
+	db_add_field('addtbl','last_viewed',$field);
+	
+	return t('The "Last viewed date" field has been added.');
+}

@@ -1,0 +1,11 @@
+<?php
+
+/*
+ * Implements hook_page_alter()
+ */
+function menu_magic_page_alter(&$page) {
+	if(arg(0) == 'magic') {
+		dsm($page);
+		$page['content']['system_main']['renderable_element']['#type'] = 'ol'; //默认为 ul
+	}
+}

@@ -1,0 +1,112 @@
+<?php
+
+/*
+ * Implements hook_menu()
+ */
+function spy_glass_menu() {
+	$items = array();
+	//Tab 菜单
+	$items['node/%node/spy_glass'] = array(
+		'title' => 'Spy Glass',
+		'description' => 'Take a closer look.',
+		'page callback' => 'spy_glass_page',
+		'page arguments' => array(1), 
+		'access callback' => 'node_access',
+		'access arguments' => array('view', 1),
+		'type' => MENU_LOCAL_TASK,
+	);
+	return $items;
+}
+
+/*
+ * Page callback
+ */
+function spy_glass_page($node) {
+	$information = _spy_glass_serious_spying_business($node);
+	$content = array();
+	foreach($information as $item) {
+		$content[] = array(
+			'#type' => 'markup',
+			'#markup' => theme('spy_glass_item', $item), //晚绑定，不直接调用
+		);
+	}
+	return $content;
+}
+
+/*
+ * Implements hook_theme
+ * 告诉系统我有哪些 hook function 要自己实现
+ */
+function spy_glass_theme($existing, $type, $theme, $path) {
+	return array(
+		// 1.使用 function
+		// 'spy_glass_item' => array( //hook name
+			// 'variables' => array('item' => NULL),
+		// ),
+		// 2. 使用 template
+		'spy_glass_item' => array(
+			'arguments' => array('title'=> NULL, 'data'=> NULL),  //传给网页的 php 变量, variables 的内层
+			'template' => 'spy-glass-item', //模板名
+		),
+	);
+}
+
+/*
+ * theme hook function
+ * 用来产生 html 代码
+ * 默认 spy_glass_item 执行代码(系统也可以替换它)
+ */
+// 用 template 替代 function 了
+// function theme_spy_glass_item($variables) {
+	// $output = '<p>';
+	// $output .= '<strong>'. check_plain($variables['title']). '</strong><br/>';
+	// $output .= filter_xss($variables['data']);
+	// $output .= '</p>';
+	
+	// return $output;
+// }
+
+/*
+ * 模板前置处理程序
+ */
+function spy_glass_preprocess_spy_glass_item(&$variables) {
+	//dsm($variables);
+	$variables['title'] = check_plain($variables['title']);
+	$variables['data'] = check_plain($variables['data']);
+}
+
+
+/**
+ * Collecting some super secret information about this node.
+ */
+function _spy_glass_serious_spying_business($node) {
+  $information = array();
+  $information[] = array(
+    'title' => t('Title Character Count'),
+    'data' => t('There are @num characters in the $node->title.', array('@num' => strlen($node->title))),
+  );
+  $seconds = $node->changed - $node->created;
+  $information[] = array(
+    'title' => t('Timestamp Differences'),
+    'data' => t('The $node->changed timestamp is @seconds different from the $node->created timestamp.', array('@seconds' => $seconds)),
+  );
+  if ($node->translate == 0) {
+    $information[] = array(
+      'title' => t('Translated?'),
+      'data' => t('This node is NOT translated into pirate speak, hope you know English.'),
+    );
+  }
+  $information[] = array(
+    'title' => t('Hash'),
+    'data' => md5($node->title),
+  );
+  // Example of potential user input data that needs to be sanitized.
+  // Instead of hard-coding this, it could be getting loaded from the db
+  // where a user has entered the info.
+  $information[] = array(
+    'title' => t('Nefarious data'),
+    'data' => '<a href="#" onclick="alert(\'Pwned!\'); return false;">click me</a>',
+  );
+  return $information;
+}
+

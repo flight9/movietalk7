@@ -1,0 +1,96 @@
+<?php
+
+/*
+ * Implements hook_menu()
+ */
+function menu_magic_menu() {
+	$items = array();
+	//单独页面
+	$items['magic'] = array(
+		'title' => 'A little magic',//似乎不用 t() 也可以翻译
+		'page callback' => 'menu_magic_basic',
+		'access callback' => 'user_access', //这个是 drupal 的函数
+		'access arguments' => array('access content'), //传递给上面 user_access 函数的参数
+	);
+	//URL 使用变量
+	$items['magic/%'] = array(
+		'title' => 'Even more magical',
+		'page callback' => 'menu_magic_extra',
+		'page arguments' => array(1), //1 对应 %
+		'access arguments' => array('access content'),
+		'file' => 'menu_magic.extra.inc.php',
+	);
+	//Tab 菜单
+	$items['user/%/magic'] = array(
+		'title' => 'Magic',
+		'description' => 'Magical magic for users',
+		'page callback' => 'menu_magic_user_tab',
+		'page arguments' => array(1), 
+		'access callback' => 'user_access',
+		'access arguments' => array('administer users'),
+		'file' => 'menu_magic.user.inc.php',
+		'type' => MENU_LOCAL_TASK,
+	);
+	//context 菜单
+	$items['node/%node/magic'] = array(
+		'title' => 'Magic',
+		'description' => 'Do amazing and magical things',
+		'page callback' => 'menu_magic_node_context',
+		'page arguments' => array(1),
+		'access arguments' => array('access content'), 
+		'file' => 'menu_magic.context.inc.php',
+		'type' => MENU_LOCAL_TASK,
+		'context' =>  MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+	);
+	return $items;
+}
+
+/*
+ * 产生页面的 callback
+ */
+function menu_magic_basic() {
+	$content = array();
+	//输出一句话
+	$content['raw_markup'] = array(
+		'#type' => 'markup',
+		'#markup' => 'Truly, this is magical!', 
+		'#prefix' => '<p>',
+		'#suffix' => '</p>',
+	);
+	//输出一个图片
+	$variables = array(
+		'path' => 'http://placekitten.com/440/400',
+		'alt' => t('Thisis a magical kitten.'),
+		'title' => t('This is the title'),
+	);
+	$content['themed_data'] = array(
+		'#type' => 'markup',
+		'#markup' => theme('image', $variables),
+		'#prefix' => '<div class="menu-magic-image">',
+		'#suffix' => '</div>',
+		'#attached' => array(
+			'css' => array(
+				drupal_get_path('module', 'menu_magic').'/menu_magic.css' ,
+			),
+		),
+	);
+	//输出一个列表
+	$content['renderable_element'] = array(
+		'#theme' => 'item_list',
+		'#title' => t('How do we know it\'s magic?'),
+		'#items' => array(
+			t('Is it made of wood?'),
+			t('Does it sink in the water?'),
+			t('Does it weigh the same as duck?'),
+			t('The current time is %time', array('%time' => date('r'))),
+		),
+		'#cache' => array(
+			'keys' => array('menu_magic','renderable_element'), //name: menu_magic:renderable_element
+			'bin' => 'cache',
+			'expire' => time()+30, //秒
+			'granularity' => DRUPAL_CACHE_PER_PAGE,
+		),
+	);
+	
+	return $content;
+}

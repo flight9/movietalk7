@@ -1,0 +1,36 @@
+<?php
+
+/*
+ * Implements hook_menu()
+ */
+function form_fun_menu() {
+	$items = array();
+	//单独页面
+	$items['form_fun/cake'] = array(
+		'title' => 'Cake or Pie?',
+		'page callback' => 'form_fun_cake_page',
+		'access arguments' => array('access content'), 
+		'file' => 'form_fun.cake.inc.php',
+		'weight' => 1,
+	);
+	//单独页面
+	$items['form_fun/tree'] = array(
+		'title' => "I'm lost!",
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('form_fun_tree'),
+		'access arguments' => array('access content'), 
+		'file' => 'form_fun.tree.inc.php',
+		'weight' => 3,
+	);
+	//单独页面
+	$items['form_fun/states'] = array(
+		'title' => "Partners!",
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('form_fun_states_form'),
+		'access arguments' => array('access content'), 
+		'file' => 'form_fun.states.inc.php',
+		'weight' => 4,
+	);
+	return $items;
+}
+

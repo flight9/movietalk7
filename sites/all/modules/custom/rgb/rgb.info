@@ -1,0 +1,8 @@
+name = RGB Color Field
+description = Provides a field API RGB color field that collects  color information and displays swatches.
+core = 7.x
+package = zzzz
+dependencies[] = field
+
+
+

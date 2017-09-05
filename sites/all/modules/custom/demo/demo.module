@@ -1,0 +1,37 @@
+<?php
+
+/*
+ * Implements hook_permission()
+ */
+function demo_permission() {
+	return array(
+		//管理这个 demo 模块
+		'administer demo module' => array(
+			'title' => t('Administer demo module'),
+			'description' => t('Perform administration tasks for the Demo module.'),
+		),
+	);
+}
+
+/*
+ * Implements hook_node_view()
+ * 这个 hook 每次 node 显示时都会执行
+ * 无论是'正文模式'还是'摘要模式'
+ */
+function demo_node_view($node, $view_mode, $langcode) {
+	$node->content['demo_field'] = array(
+		'#type' => 'markup',	//类型:标签
+		'#markup' => '<p>'.t('This is only a demo.').'</p>',
+		'#weight' => -10, //最上面
+	); 
+	$node->content['demo_list'] = array(
+		'#items' => array('green','blue','yellow','red'),
+		'#theme' => 'item_list',
+		'#weight' => -9, //次于最上
+	);
+	//krumo($node);	//查看$node
+}
+
+
+
+ 

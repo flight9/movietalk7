@@ -1,0 +1,7 @@
+name = Entity Demo
+description = 演示已有 entity 的使用.
+core = 7.x
+package = zzzz
+
+
+

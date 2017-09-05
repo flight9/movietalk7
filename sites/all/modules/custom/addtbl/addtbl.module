@@ -1,0 +1,77 @@
+<?php
+
+/*
+ * Implements hook_node_view
+ */
+function addtbl_node_view($node, $view_mode = 'full') {
+	if($view_mode == 'full') {
+		//Everytime a node is viewed, increment the node_views count
+		// in the addtbl table by one and include the result in the node content
+		
+		//Read record
+		global $user; //import user
+		$record = addtbl_get_record($node->nid, $user->uid);
+		#krumo($record);
+		
+		//If no record, create one that we can insert later
+		if($record === FALSE) {
+			$record = new StdClass();
+			$record->nid = $node->nid;
+			$record->uid = $user->uid;
+			$record->view_count = 0;
+			$record->last_viewed = time();
+		}
+		
+		//Increment view_count by 1
+		$record->view_count++;
+		$record->last_viewed = time();
+		#krumo($record);
+		
+		//Save record
+		addtbl_set_record($record);
+		
+		//Display
+		$t_args= array(
+			'%num' => $record->view_count,
+			'%date' => date('M j, Y',$record->last_viewed),
+		);
+		$node->content['node_viewes'] = array(
+			'#markup' => t('You have views this page %num times. It was last viewed by you on %date.', $t_args),
+			'#weight' => 10,
+		);
+	}
+}
+
+
+/*
+ * Get the record
+ */
+function addtbl_get_record($nid, $uid) {
+	// SELECT view_count FROM addtbl WHERE nid=$nid & uid=$uid
+	$query = db_select('addtbl', 'a')
+		->fields('a', array('nid', 'uid', 'view_count', 'last_viewed'))
+		->condition('nid', $nid)
+		->condition('uid', $uid);
+	return $query->execute()->fetch();
+}
+
+/*
+ * Save a record
+ */
+function addtbl_set_record($record) {
+	//sanity check
+	if(!is_object($record)) {
+		return watchdog('addtbl', 'We could not update information about node views.',array(),WATCHDOG_ERROR);
+	}
+	
+	//INSERT/UPDATE into addtbl ('nid','uid','node_count') VALUES(...)
+	$query = db_merge('addtbl')
+    ->key(array(
+		'nid' => $record->nid,
+		'uid' => $record->uid,
+	))
+    ->fields((array)$record)
+    ->execute();
+}
+
+

@@ -1,0 +1,300 @@
+<?php
+
+/*
+ * Implements hook_entity_info()
+ */
+function videoentity_entity_info() {
+	$info = array();
+	$info['video'] = array(
+		'label' => t('Video'),
+		'base table' => 'videoentity_video',
+		// Table for storing revision data
+		'revision table' => 'videoentity_video_revison',
+		// This helps Entity API know how to query your custom table
+		'entity keys' => array( 
+			'id' => 'id', //主键
+			'label' => 'name', //entity label
+			'revision' => 'revision_id', 
+		),
+		'entity class' => 'VideoEntity', //Default: 'Entity'
+		'controller class' => 'VideoEntityController', //Default: 'DrupalDefaultEntityController'
+		'uri callback' => 'entity_class_uri',
+		'admin ui' => array(
+			'path' => 'admin/videoentity',
+			'controller class' => 'VideoEntityUIController',
+			'menu wildcard' => '%videoentity',
+			'file' => 'videoentity.admin.inc',
+		),
+		'module' => 'videoentity',
+		//Access callback to determing permissions
+		'access callback' => 'videoentity_access_callback',
+		// Fields can be attached
+		'fieldable' => true,
+		'bundles' => array(
+			'video' => array(
+				'label' => t('Video'),
+				'admin' => array(
+					'path' => 'admin/videoentity',
+					'access arguments' => array('administer video'),
+				),
+			),
+		),
+		// Custom view modes
+		'view modes' => array(
+			'non_member' => array(
+				'label' => t('Non-Member'),
+				'custom settings' => false,
+			),
+			'member' => array(
+				'label' => t('Member'),
+				'custom settings' => false,
+			),
+		),
+		// Support views
+		'views controller class' => 'EntityDefaultViewsController',
+	);
+	return $info;
+}
+
+/*
+ * Implements hook_menu()
+ */
+function videoentity_menu() {
+	$items = array();
+	//单独页面
+	$items['videoentity'] = array(
+		'title' => 'Entity create demos',
+		'description' => 'Create custom entity demos.',
+		'page callback' => 'videoentity_demo_page',
+		'access callback' => TRUE,
+		'menu' => 'navigation', 
+	);
+	//单独页面
+	$items['video/%videoentity'] = array(
+		'title' => 'Video',
+		'page callback' => 'videoentity_view_entity',
+		'page arguments' => array(1),
+		'access callback' => TRUE,
+	);
+	//单独页面
+	$items['video/%videoentity/%'] = array(
+		'title' => 'Video revision',
+		'load arguments' => array(2),
+		'page callback' => 'videoentity_view_revision',
+		'page arguments' => array(1),
+		'access callback' => TRUE,
+	);
+	return $items;
+}
+
+/*
+ * Implements hook_entity_property_info()
+ */
+function videoentity_entity_property_info() {
+	$info = array();
+	$properties = &$info['video']['properties'];
+	$properties['id'] = array(
+		'label' => t('Video ID'),
+		'description' => t('The unique id of the video'),
+        'type' => 'integer',
+        'schema field' => 'id',
+	);
+	$properties['name'] = array(
+		'label' => t('Name'),
+		'description' => t('Name of the video'),
+        'type' => 'text',
+        'schema field' => 'name',
+	);
+	$properties['embedcode'] = array(
+		'label' => t('Embedcode'),
+		'description' => t('Embedcode for the video'),
+        'type' => 'text',
+        'schema field' => 'embedcode',
+	);
+	$properties['created_at'] = array(
+		'label' => t('Created date'),
+		'description' => t('Date the video was created'),
+        'type' => 'date',
+        'schema field' => 'created_at',
+	);
+	$properties['updated_at'] = array(
+		'label' => t('Updated date'),
+		'description' => t('Date the video was updated'),
+        'type' => 'date',
+        'schema field' => 'updated_at',
+	);
+	$properties['duration'] = array(
+		'label' => t('Duration'),
+        'description' => 'Length of the video, in seconds.',
+        'type' => 'duration',
+        'schema field' => 'duration',
+      );
+	
+	return $info;
+}
+
+/*
+ * Page callback
+ */
+function videoentity_demo_page() {
+	$videos = entity_load('video',array(1));
+	krumo($videos);
+	
+	$query = new EntityFieldQuery();
+	$result = $query->entityCondition('entity_type','video')
+	->execute();
+	krumo($result);
+	
+	return 'hello';
+}
+
+/*
+ * Page callback
+ */
+function videoentity_view_entity($video) {
+	drupal_set_title($video->name);
+	$video_entity = entity_view('video',array($video->id => $video), 'member'); //'member' is one of our view modes
+	kpr($video_entity);
+	return $video_entity;
+}
+
+/*
+ * Page callback
+ */
+function videoentity_view_revision($video) {
+	$output = videoentity_view_entity($video);
+	drupal_set_title($video->name.' revision '. $video->revision_id);
+	drupal_set_title(t('@title revision @id',array('@title'=>$video->name, '@id'=>$video->revision_id)));
+	return $output;
+}
+
+/*
+ * Implements hook_permission()
+ */
+function videoentity_permission() {
+	return array(
+		'administer videos' => array(
+			'title' => t('Adminster video entities'),
+		),
+		'view videos' => array(
+			'title' => t('View video entities'),
+		),
+	);
+}
+
+/*
+ * Access callback
+ */
+function videoentity_access_callback($op, $videoentity=NULL, $account=NULL) {
+	if($op == 'view' && user_access('view videos', $account)) {
+		return true;
+	} elseif( user_access('administer videos', $account)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/*
+ * Menu autoloader for /video 
+ */
+function videoentity_load($id, $revision_id=NULL) {
+	if(!is_null($revision_id)) {
+		$video = entity_revision_load('video', $revision_id);
+		return $video;
+	} else {
+		$video = entity_load('video', array($id));
+		return array_pop($video);
+	}
+}
+
+/**
+ * Our custom entity class.
+ *
+ * The Entity class we're overriding is in
+ * sites/all/modules/contrib/entity/includes/entity.inc
+ */
+class VideoEntity extends Entity {
+	/**
+	 * Override this in order to implement a custom default URI and specify
+	 * 'entity_class_uri' as 'uri callback' hook_entity_info().
+	 */
+	protected function defaultUri() {
+		return array('path' => 'video/' . $this->identifier());
+	}
+}
+
+/**
+ * Our custom controller class.
+ *
+ * The EntityAPIController is found in
+ * sites/all/modules/contrib/entity/includes/entity.controller.inc
+ */
+class VideoEntityController extends EntityAPIController {
+	//
+	public function buildContent($entity, $view_mode = 'non-member', $langcode = NULL, $content = array()) {
+		$build = parent::buildContent($entity, $view_mode, $langcode, $content);
+		
+		$build['duration'] = array(
+			'#type' => 'markup',
+			'#markup' => format_interval($entity->duration),
+			'#prefix' => '<p>',
+			'#sufix' => '</p>',
+		);
+		if($view_mode == 'member') {
+			$build['embedcode'] = array(
+				'#type' => 'markup',
+				'#markup' => "<iframe height=470 width=480 src='http://player.youku.com/embed/". $entity->embedcode ."' frameborder=0 'allowfullscreen'></iframe>",
+				'#prefix' => '<p>',
+				'#sufix' => '</p>',
+			);
+		} else {
+			$build['embedcode'] = array(
+				'#type' => 'markup',
+				'#markup' => $entity->embedcode,
+				'#prefix' => '<p>',
+				'#sufix' => '</p>',
+			);
+		}
+		
+		return $build;
+	}
+	
+	//populate created/updated dates 
+	public function save($entity, DatabaseTransaction $transaction = NULL) {
+		if(isset($entity->is_new)) {
+			$entity->created_at = REQUEST_TIME;
+		}
+		$entity->updated_at = REQUEST_TIME;
+		
+		// Always save new revisions
+		$entity->is_new_revision = TRUE;
+		
+		return parent::save($entity, $transaction);
+	}
+}
+
+/**
+ * Our custom controller for the admin ui.
+ *
+ * The EntityDefaultUIController can be found in
+ * sites/all/modules/contrib/entity/includes/entity.ui.inc
+ */
+class VideoEntityUIController extends EntityDefaultUIController {
+  /**
+   * Generates the table headers for the overview table.
+   */
+  protected function overviewTableHeaders($conditions, $rows, $additional_header = array()) {
+    $header = $additional_header;
+    array_unshift($header, t('Video'));  //默认: t('Label')
+    if (!empty($this->entityInfo['exportable'])) {
+      $header[] = t('Status');
+    }
+    // Add operations with the right colspan.
+    $header[] = array('data' => t('Operations'), 'colspan' => $this->operationCount());
+    return $header;
+  }
+}
+
+
+

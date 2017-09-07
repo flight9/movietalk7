@@ -1,0 +1,6 @@
+name = tri_wx_pf
+description = TriFocus Wechat integration
+core = 7.x
+package = TriFocus
+version = 7.x-1.0
+features[features_api][] = api:2

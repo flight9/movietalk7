@@ -110,6 +110,10 @@ function tri_wx_pf_views_default_views() {
   $handler->display->display_options['fields']['uid']['id'] = 'uid';
   $handler->display->display_options['fields']['uid']['table'] = 'users';
   $handler->display->display_options['fields']['uid']['field'] = 'uid';
+  /* Field: User: Mobile */
+  $handler->display->display_options['fields']['field_mobile']['id'] = 'field_mobile';
+  $handler->display->display_options['fields']['field_mobile']['table'] = 'field_data_field_mobile';
+  $handler->display->display_options['fields']['field_mobile']['field'] = 'field_mobile';
   /* Field: Wechat User: Openid */
   $handler->display->display_options['fields']['openid']['id'] = 'openid';
   $handler->display->display_options['fields']['openid']['table'] = 'wechat_login_user';
@@ -141,6 +145,11 @@ function tri_wx_pf_views_default_views() {
   $handler->display->display_options['fields']['city']['table'] = 'wechat_login_user';
   $handler->display->display_options['fields']['city']['field'] = 'city';
   $handler->display->display_options['fields']['city']['relationship'] = 'wechat_login_user';
+  /* Field: Wechat User: Language */
+  $handler->display->display_options['fields']['language']['id'] = 'language';
+  $handler->display->display_options['fields']['language']['table'] = 'wechat_login_user';
+  $handler->display->display_options['fields']['language']['field'] = 'language';
+  $handler->display->display_options['fields']['language']['relationship'] = 'wechat_login_user';
   /* Sort criterion: User: Created date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'users';

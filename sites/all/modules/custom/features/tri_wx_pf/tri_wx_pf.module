@@ -1,5 +1,7 @@
 <?php
 /**
  * @file
- * Drupal needs this blank file.
+ * Code for the tri_wx_pf feature.
  */
+
+include_once 'tri_wx_pf.features.inc';

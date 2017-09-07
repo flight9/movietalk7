@@ -114,6 +114,16 @@ function tri_wx_pf_views_default_views() {
   $handler->display->display_options['fields']['field_mobile']['id'] = 'field_mobile';
   $handler->display->display_options['fields']['field_mobile']['table'] = 'field_data_field_mobile';
   $handler->display->display_options['fields']['field_mobile']['field'] = 'field_mobile';
+  /* Field: Wechat User: Headimgurl */
+  $handler->display->display_options['fields']['headimgurl']['id'] = 'headimgurl';
+  $handler->display->display_options['fields']['headimgurl']['table'] = 'wechat_login_user';
+  $handler->display->display_options['fields']['headimgurl']['field'] = 'headimgurl';
+  $handler->display->display_options['fields']['headimgurl']['relationship'] = 'wechat_login_user';
+  $handler->display->display_options['fields']['headimgurl']['label'] = 'Head Img';
+  $handler->display->display_options['fields']['headimgurl']['alter']['alter_text'] = TRUE;
+  $handler->display->display_options['fields']['headimgurl']['alter']['text'] = '<img width="100px" height="100px" src="[headimgurl]"/>';
+  $handler->display->display_options['fields']['headimgurl']['alter']['make_link'] = TRUE;
+  $handler->display->display_options['fields']['headimgurl']['alter']['path'] = '[headimgurl]';
   /* Field: Wechat User: Openid */
   $handler->display->display_options['fields']['openid']['id'] = 'openid';
   $handler->display->display_options['fields']['openid']['table'] = 'wechat_login_user';

@@ -21,7 +21,7 @@ function videoentity_entity_info() {
 		'uri callback' => 'entity_class_uri',
 		'admin ui' => array(
 			'path' => 'admin/videoentity',
-			'controller class' => 'VideoEntityUIController',
+			'controller class' => 'VideoEntityUIController', //Default: 
 			'menu wildcard' => '%videoentity',
 			'file' => 'videoentity.admin.inc',
 		),
@@ -137,7 +137,7 @@ function videoentity_entity_property_info() {
  * Page callback
  */
 function videoentity_demo_page() {
-	$videos = entity_load('video',array(1));
+	$videos = entity_load('video',array(4));
 	krumo($videos);
 	
 	$query = new EntityFieldQuery();

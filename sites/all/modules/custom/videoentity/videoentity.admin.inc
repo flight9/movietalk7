@@ -17,7 +17,7 @@ function video_form($form, &$form_state, $video=NULL) {
 		'#title' => t('Embed code'),
 		'#type' => 'textfield',
 		'#default_value' => isset($video->embedcode)? $video->embedcode:'',
-		'#description' => t('Embed code from youtube.com'),
+		'#description' => t('Embed code from youku.com'),
 		'#required' => true,
 	);
 	

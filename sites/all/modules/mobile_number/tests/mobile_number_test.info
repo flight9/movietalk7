@@ -1,0 +1,16 @@
+name = "Mobile Number tests"
+description = "Support module for mobile number related testing."
+package = Testing
+version = VERSION
+core = 7.x
+hidden = TRUE
+
+dependencies[] = 'mobile_number'
+dependencies[] = 'smsframework:sms'
+
+; Information added by Drupal.org packaging script on 2017-01-17
+version = "7.x-1.0-alpha5"
+core = "7.x"
+project = "mobile_number"
+datestamp = "1484680694"
+
